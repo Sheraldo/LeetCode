@@ -47,42 +47,13 @@ Constraints:
     colors consists of only the letters 'A' and 'B'
 
 """
-def get_color_sequences(colors, c) -> list:
-    i = 0
-    n = len(colors)
-    seq = []
-    while i < n:
-        if colors[i] == c:
-            j = i
-            cnt = 0
-            while j < n and colors[j] == c:
-                cnt += 1
-                j += 1
-            seq.append(cnt)
-            i = j
-        i += 1
-    return seq
 class Solution:
     def winnerOfGame(self, colors: str) -> bool:
-        a_seq = get_color_sequences(colors, 'A')
-        b_seq = get_color_sequences(colors, 'B')
+        cnts = defaultdict(int)
+        for c, grp_list in groupby(colors):
+            cnts[c] += max(len(list(grp_list)) - 2, 0)
 
-        a_valid = [cnt - 2 for cnt in a_seq if cnt > 2]
-        b_valid = [cnt - 2 for cnt in b_seq if cnt > 2]
-
-        a_moves = sum(a_valid)
-        b_moves = sum(b_valid)
-
-        # print(f"{a_moves=}, {b_moves=}")
-        i = 0
-        while a_moves and b_moves:
-            if i % 2 == 0:
-                a_moves -= 1
-            else:
-                b_moves -= 1
-            i += 1
-        if i%2 == 0:
-            return  True if a_moves else False
-        else:
-            return False if b_moves else True
+        if cnts['A'] > cnts['B']:
+            return True
+        return False
 
